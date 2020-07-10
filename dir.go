@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"sort"
 )
 
 type ShortName struct {
@@ -107,6 +108,21 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
+
+	sort.Slice(files, func(i, j int) bool {
+		if result := bytes.Compare(
+			files[i].name[:],
+			files[j].name[:],
+		); result != 0 {
+			return result < 0
+		} else {
+			return bytes.Compare(
+				files[i].ext[:],
+				files[j].ext[:],
+			) < 0
+		}
+	})
+
 	for _, file := range files {
 		fmt.Println(ShortNameToString(file))
 	}
